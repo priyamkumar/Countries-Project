@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import CountryDetailShimmer from "./CountryDetailsShimmer";
-import './CountryDetails.css'
+import "./CountryDetails.css";
 
 export default function CountryDetails() {
   const [countryDetail, setCountryDetail] = useState(null);
@@ -9,20 +9,6 @@ export default function CountryDetails() {
   const { state } = useLocation();
   const countryName = params.country;
   const [notFound, setNotFound] = useState(false);
-
-  useEffect(() => {
-    if (state) {
-      updateCountryData(state);
-      return;
-    }
-    fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
-      .then((res) => res.json())
-      .then((data) => {
-        console.log(data[0]);
-        setCountryDetail(data[0]);
-        console.log(countryDetail);
-      });
-  }, [countryName]);
 
   function updateCountryData(data) {
     setCountryDetail({
@@ -32,7 +18,7 @@ export default function CountryDetails() {
       region: data.region,
       subregion: data.subregion,
       capital: data.capital,
-      flag: data.flags.svg,
+      flag: data.flags?.svg,
       tld: data.tld,
       languages: Object.values(data.languages || {}).join(", "),
       currencies: Object.values(data.currencies || {})
@@ -41,6 +27,27 @@ export default function CountryDetails() {
       borders: [],
     });
     console.log(countryDetail);
+  }
+
+  useEffect(() => {
+    if (state) {
+      updateCountryData(state);
+      return;
+    }
+    fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
+      .then((res) => res.json())
+      .then((data) => {
+        setCountryDetail(data[0]);
+        updateCountryData(state);
+        console.log(countryDetail);
+      })
+      .catch((err) => {
+        setNotFound(true);
+      });
+  }, [countryName]);
+
+  if (notFound) {
+    return <div>Country not found</div>;
   }
 
   if (countryDetail === null) {
@@ -74,7 +81,7 @@ export default function CountryDetails() {
               <span className="sub-region"></span>
             </p>
             <p>
-              <b>Capital: {countryDetail.capital.join(", ")}</b>
+              <b>Capital: {countryDetail.capital?.join(", ")}</b>
               <span className="capital"></span>
             </p>
             <p>
