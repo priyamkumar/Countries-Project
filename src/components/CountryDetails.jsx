@@ -1,10 +1,19 @@
 import { useState, useEffect } from "react";
-import CountryDetailShimmer from "./CountryDetailsShimmer";
+import { Link, useLocation, useParams } from 'react-router-dom'
+import CountryDetailShimmer from "./CountryDetailsShimmer"
 
 export default function CountryDetails() {
-  const countryName = new URLSearchParams(location.search).get("name");
   const [countryDetail, setCountryDetail] = useState(null);
+  const params = useParams()
+  const { state } = useLocation()
+  const countryName = params.country
+  const [notFound, setNotFound] = useState(false)
+
   useEffect(() => {
+    if (state) {
+      updateCountryData(state)
+      return
+    }
     fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
       .then((res) => res.json())
       .then((data) => {
@@ -12,7 +21,28 @@ export default function CountryDetails() {
         setCountryDetail(data[0]);
         console.log(countryDetail)
       });
-  }, []);
+  }, [countryName]);
+
+
+  function updateCountryData(data)
+  {
+    setCountryDetail({
+      name: data.name.common || data.name,
+      nativeName: Object.values(data.name.nativeName || {})[0]?.common,
+      population: data.population,
+      region: data.region,
+      subregion: data.subregion,
+      capital: data.capital,
+      flag: data.flags.svg,
+      tld: data.tld,
+      languages: Object.values(data.languages || {}).join(', '),
+      currencies: Object.values(data.currencies || {})
+        .map((currency) => currency.name)
+        .join(', '),
+      borders: [],
+    })
+    console.log(countryDetail);
+  }
 
 if(countryDetail === null)
 {
@@ -25,12 +55,12 @@ if(countryDetail === null)
         <i className="fa-solid fa-arrow-left"></i>&nbsp; Back
       </span>
       <div className="country-details">
-        <img src={countryDetail.flags.svg} alt={`${countryDetail.name.common} flag`} />
+        <img src={countryDetail.flag} alt={`${countryDetail.name} flag`} />
         <div className="details-text-container">
-          <h1>{countryDetail.name.common}</h1>
+          <h1>{""}</h1>
           <div className="details-text">
             <p>
-              <b>Native Name: {countryDetail.name.official}</b>
+              <b>Native Name: {countryDetail.nativeName}</b>
               <span className="native-name"></span>
             </p>
             <p>
@@ -46,24 +76,24 @@ if(countryDetail === null)
               <span className="sub-region"></span>
             </p>
             <p>
-              <b>Capital: {countryDetail.capital?.[0]}</b>
+              <b>Capital: {countryDetail.capital}</b>
               <span className="capital"></span>
             </p>
             <p>
-              <b>Top Level Domain: {countryDetail.tld[0]}</b>
+              <b>Top Level Domain: {countryDetail.tld}</b>
               <span className="top-level-domain"></span>
             </p>
             <p>
-              <b>Currencies: {countryDetail.currencies[0]}</b>
+              <b>Currencies: {countryDetail.currencies}</b>
               <span className="currencies"></span>
             </p>
             <p>
-              <b>Languages: </b>
+              <b>Languages: {countryDetail.languages}</b>
               <span className="languages"></span>
             </p>
           </div>
           <div className="border-countries">
-            <b>Border Countries: </b>&nbsp;
+            <b>Border Countries: {countryDetail.borders}</b>&nbsp;
           </div>
         </div>
       </div>
