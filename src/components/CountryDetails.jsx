@@ -1,31 +1,30 @@
 import { useState, useEffect } from "react";
-import { Link, useLocation, useParams } from 'react-router-dom'
-import CountryDetailShimmer from "./CountryDetailsShimmer"
+import { Link, useLocation, useParams } from "react-router-dom";
+import CountryDetailShimmer from "./CountryDetailsShimmer";
+import './CountryDetails.css'
 
 export default function CountryDetails() {
   const [countryDetail, setCountryDetail] = useState(null);
-  const params = useParams()
-  const { state } = useLocation()
-  const countryName = params.country
-  const [notFound, setNotFound] = useState(false)
+  const params = useParams();
+  const { state } = useLocation();
+  const countryName = params.country;
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     if (state) {
-      updateCountryData(state)
-      return
+      updateCountryData(state);
+      return;
     }
     fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
       .then((res) => res.json())
       .then((data) => {
         console.log(data[0]);
         setCountryDetail(data[0]);
-        console.log(countryDetail)
+        console.log(countryDetail);
       });
   }, [countryName]);
 
-
-  function updateCountryData(data)
-  {
+  function updateCountryData(data) {
     setCountryDetail({
       name: data.name.common || data.name,
       nativeName: Object.values(data.name.nativeName || {})[0]?.common,
@@ -35,20 +34,19 @@ export default function CountryDetails() {
       capital: data.capital,
       flag: data.flags.svg,
       tld: data.tld,
-      languages: Object.values(data.languages || {}).join(', '),
+      languages: Object.values(data.languages || {}).join(", "),
       currencies: Object.values(data.currencies || {})
         .map((currency) => currency.name)
-        .join(', '),
+        .join(", "),
       borders: [],
-    })
+    });
     console.log(countryDetail);
   }
 
-if(countryDetail === null)
-{
-  return <CountryDetailShimmer/>
-}
-  
+  if (countryDetail === null) {
+    return <CountryDetailShimmer />;
+  }
+
   return (
     <div className="country-details-container">
       <span className="back-button">
@@ -76,7 +74,7 @@ if(countryDetail === null)
               <span className="sub-region"></span>
             </p>
             <p>
-              <b>Capital: {countryDetail.capital}</b>
+              <b>Capital: {countryDetail.capital.join(", ")}</b>
               <span className="capital"></span>
             </p>
             <p>
@@ -92,9 +90,11 @@ if(countryDetail === null)
               <span className="languages"></span>
             </p>
           </div>
-          <div className="border-countries">
-            <b>Border Countries: {countryDetail.borders}</b>&nbsp;
-          </div>
+          {countryDetail.borders.length !== 0 && (
+            <div className="border-countries">
+              <b>Border Countries: {countryDetail.borders}</b>&nbsp;
+            </div>
+          )}
         </div>
       </div>
     </div>
