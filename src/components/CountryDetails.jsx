@@ -39,7 +39,6 @@ export default function CountryDetails() {
     fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
       .then((res) => res.json())
       .then(([data]) => {
-        console.log(data);
         setCountryDetail({
           name: data.name.common,
           nativeName: Object.values(data.name.nativeName)[0].common,
@@ -57,6 +56,14 @@ export default function CountryDetails() {
         });
         // updateCountryData(state);
         console.log(countryDetail);
+
+        Promise.all(data.borders.map((border) => {
+          return fetch(`https://restcountries.com/v3.1/alpha/${border}`)
+          .then((res) => res.json())
+          .then(([borderCountry]) => borderCountry.name.common)
+        })).then((borders) => {
+          setCountryDetail((prevState) => ({...prevState, borders }))
+        })
       })
       .catch((err) => {
         setNotFound(true);

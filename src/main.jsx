@@ -28,6 +28,6 @@ root.render(
   <StrictMode>
 <RouterProvider router={router}>
     <App />
-  </RouterProvider>,
-  </StrictMode>,
+  </RouterProvider>
+  </StrictMode>
 )
