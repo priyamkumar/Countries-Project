@@ -52,17 +52,24 @@ export default function CountryDetails() {
           currencies: Object.values(data.currencies)
             .map((currency) => currency.name)
             .join(', '),
-          borders: ["India"]
+          borders: []
         });
         // updateCountryData(state);
         console.log(countryDetail);
+        
+        if(!data.borders) {
+          data.borders = []
+        }
 
         Promise.all(data.borders.map((border) => {
           return fetch(`https://restcountries.com/v3.1/alpha/${border}`)
           .then((res) => res.json())
-          .then(([borderCountry]) => borderCountry.name.common)
-        })).then((borders) => {
-          setCountryDetail((prevState) => ({...prevState, borders }))
+          .then(([borderCountry]) => {
+            setCountryDetail((prevState) => ({...prevState, borders: [...prevState.borders, borderCountry.name.common]}))
+          }
+          )
+        })).then((allBordersName) => {
+          setCountryDetail((prevState) => ({...prevState, borders: [...prevState.borders, allBordersName]}))
         })
       })
       .catch((err) => {
@@ -86,7 +93,7 @@ export default function CountryDetails() {
       <div className="country-details">
         <img src={countryDetail.flag} alt={`${countryDetail.name} flag`} />
         <div className="details-text-container">
-          <h1>{""}</h1>
+          <h1>{countryDetail.name}</h1>
           <div className="details-text">
             <p>
               <b>Native Name: {countryDetail.nativeName}</b>
