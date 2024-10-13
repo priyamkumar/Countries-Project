@@ -4,41 +4,58 @@ import CountryDetailShimmer from "./CountryDetailsShimmer";
 import "./CountryDetails.css";
 
 export default function CountryDetails() {
-  const [countryDetail, setCountryDetail] = useState(null);
   const params = useParams();
+  const countryName = params.CountryDetail;
+  console.log(countryName);
+
+  const [countryDetail, setCountryDetail] = useState(null);
   const { state } = useLocation();
-  const countryName = params.country;
   const [notFound, setNotFound] = useState(false);
 
-  function updateCountryData(data) {
-    setCountryDetail({
-      name: data.name.common || data.name,
-      nativeName: Object.values(data.name.nativeName || {})[0]?.common,
-      population: data.population,
-      region: data.region,
-      subregion: data.subregion,
-      capital: data.capital,
-      flag: data.flags?.svg,
-      tld: data.tld,
-      languages: Object.values(data.languages || {}).join(", "),
-      currencies: Object.values(data.currencies || {})
-        .map((currency) => currency.name)
-        .join(", "),
-      borders: [],
-    });
-    console.log(countryDetail);
-  }
+  // function updateCountryData(data) {
+  //   setCountryDetail({
+  //     name: data.name.common || data.name,
+  //     nativeName: Object.values(data.name.nativeName || {})[0]?.common,
+  //     population: data.population,
+  //     region: data.region,
+  //     subregion: data.subregion,
+  //     capital: data.capital,
+  //     flag: data.flags?.svg,
+  //     tld: data.tld,
+  //     languages: Object.values(data.languages || {}).join(", "),
+  //     currencies: Object.values(data.currencies || {})
+  //       .map((currency) => currency.name)
+  //       .join(", "),
+  //     borders: [],
+  //   });
+  //   console.log(countryDetail);
+  // }
 
   useEffect(() => {
-    if (state) {
-      updateCountryData(state);
-      return;
-    }
+    // if (state) {
+    //   updateCountryData(state);
+    //   return;
+    // }
     fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
       .then((res) => res.json())
-      .then((data) => {
-        setCountryDetail(data[0]);
-        updateCountryData(state);
+      .then(([data]) => {
+        console.log(data);
+        setCountryDetail({
+          name: data.name.common,
+          nativeName: Object.values(data.name.nativeName)[0].common,
+          population: data.population,
+          region: data.region,
+          subregion: data.subregion,
+          capital: data.capital,
+          flag: data.flags.svg,
+          tld: data.tld,
+          languages: Object.values(data.languages).join(', '),
+          currencies: Object.values(data.currencies)
+            .map((currency) => currency.name)
+            .join(', '),
+          borders: ["India"]
+        });
+        // updateCountryData(state);
         console.log(countryDetail);
       })
       .catch((err) => {
@@ -99,7 +116,8 @@ export default function CountryDetails() {
           </div>
           {countryDetail.borders.length !== 0 && (
             <div className="border-countries">
-              <b>Border Countries: {countryDetail.borders}</b>&nbsp;
+              <b>Border Countries: {
+              countryDetail.borders.map((border) => <Link key={border} to={`/${border}`}>{border}</Link>)}</b>&nbsp;
             </div>
           )}
         </div>
