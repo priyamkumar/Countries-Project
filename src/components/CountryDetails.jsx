@@ -64,12 +64,9 @@ export default function CountryDetails() {
         Promise.all(data.borders.map((border) => {
           return fetch(`https://restcountries.com/v3.1/alpha/${border}`)
           .then((res) => res.json())
-          .then(([borderCountry]) => {
-            setCountryDetail((prevState) => ({...prevState, borders: [...prevState.borders, borderCountry.name.common]}))
-          }
-          )
-        })).then((allBordersName) => {
-          setCountryDetail((prevState) => ({...prevState, borders: [...prevState.borders, allBordersName]}))
+          .then(([borderCountry]) => borderCountry.name.common)
+        })).then((borders) => {
+          setCountryDetail((prevState) => ({...prevState, borders }))
         })
       })
       .catch((err) => {
