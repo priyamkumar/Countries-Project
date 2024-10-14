@@ -2,40 +2,41 @@ import { useState, useEffect } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import CountryDetailShimmer from "./CountryDetailsShimmer";
 import "./CountryDetails.css";
+import { useOutletContext } from "react-router-dom";
 
 export default function CountryDetails() {
   const params = useParams();
   const countryName = params.CountryDetail;
   console.log(countryName);
+  const [isDark] = useOutletContext();
 
   const [countryDetail, setCountryDetail] = useState(null);
   const { state } = useLocation();
   const [notFound, setNotFound] = useState(false);
 
-  // function updateCountryData(data) {
-  //   setCountryDetail({
-  //     name: data.name.common || data.name,
-  //     nativeName: Object.values(data.name.nativeName || {})[0]?.common,
-  //     population: data.population,
-  //     region: data.region,
-  //     subregion: data.subregion,
-  //     capital: data.capital,
-  //     flag: data.flags?.svg,
-  //     tld: data.tld,
-  //     languages: Object.values(data.languages || {}).join(", "),
-  //     currencies: Object.values(data.currencies || {})
-  //       .map((currency) => currency.name)
-  //       .join(", "),
-  //     borders: [],
-  //   });
-  //   console.log(countryDetail);
-  // }
+  function updateCountryData(data) {
+    setCountryDetail({
+      name: data.name.common || data.name,
+      nativeName: Object.values(data.name.nativeName || {})[0]?.common,
+      population: data.population,
+      region: data.region,
+      subregion: data.subregion,
+      capital: data.capital,
+      flag: data.flags?.svg,
+      tld: data.tld,
+      languages: Object.values(data.languages || {}).join(", "),
+      currencies: Object.values(data.currencies || {})
+        .map((currency) => currency.name)
+        .join(", "),
+      borders: [],
+    });
+  }
 
   useEffect(() => {
-    // if (state) {
-    //   updateCountryData(state);
-    //   return;
-    // }
+    if (state) {
+      updateCountryData(state);
+      return;
+    }
     fetch(`https://restcountries.com/v3.1/name/${countryName}?fullText=true`)
       .then((res) => res.json())
       .then(([data]) => {
@@ -66,7 +67,7 @@ export default function CountryDetails() {
           .then((res) => res.json())
           .then(([borderCountry]) => borderCountry.name.common)
         })).then((borders) => {
-          setCountryDetail((prevState) => ({...prevState, borders }))
+          setTimeout(setCountryDetail((prevState) => ({...prevState, borders })))
         })
       })
       .catch((err) => {
@@ -83,6 +84,7 @@ export default function CountryDetails() {
   }
 
   return (
+    <main className={`${isDark? 'dark' : ''}`}>
     <div className="country-details-container">
       <span className="back-button" onClick={() => history.back()}>
         <i className="fa-solid fa-arrow-left"></i>&nbsp; Back
@@ -134,5 +136,6 @@ export default function CountryDetails() {
         </div>
       </div>
     </div>
+    </main>
   );
 }

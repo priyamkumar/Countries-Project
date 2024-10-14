@@ -10,16 +10,20 @@ import CountryDetails from './components/CountryDetails.jsx';
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Home />,
+    element: <App />,
     errorElement: <Error />,
     children: [
-
+      {
+        path: "/",
+        element: <Home />
+      },
+      {
+        path: "/:CountryDetail",
+        element: <CountryDetails />
+      }
     ]
   },
-  {
-    path: "/:CountryDetail",
-    element: <CountryDetails />
-  }
+  
 ])
 
 const root = createRoot(document.getElementById('root'))
