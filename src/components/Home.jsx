@@ -1,12 +1,12 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Search from "./Search.jsx";
 import Dropdown from "./dropdown.jsx";
 import CountriesContainer from "./CountriesContainer.jsx";
-import { useOutletContext } from "react-router-dom";
+import { ThemeContext } from "../contexts/ThemeContext.jsx";
 
 function Home() {
   const [query, setQuery] = useState("");
-  const [isDark] = useOutletContext();
+  const [isDark] = useContext(ThemeContext);
 
   return (
     <>
