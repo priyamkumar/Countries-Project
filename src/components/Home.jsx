@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Search from "./Search.jsx";
-import Dropdown from "./dropdown.jsx";
+import Dropdown from "./Dropdown.jsx";
 import CountriesContainer from "./CountriesContainer.jsx";
 import { useTheme } from "../hook/useTheme.jsx";
 
