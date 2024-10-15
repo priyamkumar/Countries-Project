@@ -6,16 +6,17 @@ import { useTheme } from "../hook/useTheme.jsx";
 
 function Home() {
   const [query, setQuery] = useState("");
+  const [regionQuery, setRegionQuery] = useState("");
   const [isDark] = useTheme();
 
   return (
     <>
       <main className={`${isDark? 'dark' : ''}`}>
         <div className="search-filter-container">
-          <Search setQuery={setQuery}/>
-          <Dropdown />
+          <Search setQuery={setQuery} setRegionQuery={setRegionQuery}/>
+          <Dropdown setRegionQuery={setRegionQuery}/>
         </div>
-        <CountriesContainer query={query}/>
+        <CountriesContainer query={query} regionQuery={regionQuery}/>
       </main>
     </>
   );

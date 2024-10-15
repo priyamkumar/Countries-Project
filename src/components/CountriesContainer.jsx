@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import CountryCard from "./CountryCard";
 import CountriesListShimmer from "./CountriesListShimmer";
 
-export default function CountriesContainer({query}) {
+export default function CountriesContainer({query, regionQuery}) {
   const [countryData, setCountryData] = useState([]);
 
   useEffect(() => {
@@ -24,8 +24,10 @@ export default function CountriesContainer({query}) {
       {countryData
         .filter(
           (country) =>
-            country.name.common.toLowerCase().includes(query) ||
-            country.region.toLowerCase().includes(query)
+            country.name.common.toLowerCase().includes(query) 
+        ).filter(
+          (country) =>
+            country.region.toLowerCase().includes(regionQuery)
         )
         .map((country) => (
           <CountryCard
